@@ -1,15 +1,15 @@
-def find_parent(parent, i):
-    # ЗАМІНИТИ: змінна i - на node_index, щоб було зрозуміліше, що це індекс вузла
-    if parent[i] == i:
-        return i
-    return find_parent(parent, parent[i])
+def find_parent(parent, node_index):
+
+    if parent[node_index] == node_index:
+        return node_index
+    return find_parent(parent, parent[node_index])
 
 
-def union(parent, rank, x, y):
-    # ЗАМІНИТИ назви змінних x та y на більш зрозумілі island1 та island2,
+def union(parent, rank, island1, island2):
 
-    xroot = find_parent(parent, x)
-    yroot = find_parent(parent, y)
+
+    xroot = find_parent(parent, island1)
+    yroot = find_parent(parent, island2)
 
     if rank[xroot] < rank[yroot]:
         parent[xroot] = yroot
@@ -22,7 +22,7 @@ def union(parent, rank, x, y):
 
 def kruskal(graph):
     mst = []
-    i, e = 0, 0
+    current_edge_index, edges_added = 0, 0
     parent = []
     rank = []
 
@@ -32,17 +32,16 @@ def kruskal(graph):
 
     edges = sorted(graph, key=lambda item: item[2])
 
-    while e < len(graph) - 1 and i < len(graph) - 1:
-        # ЗАМІНИТИ назви змінних u, v, w на більш зрозумілі, наприклад, island1_index, island2_index, distance,
+    while edges_added < len(graph) - 1 and current_edge_index < len(graph) - 1:
 
-        u, v, w = edges[i]
-        i += 1
-        x = find_parent(parent, u)
-        y = find_parent(parent, v)
+        island1_index, island2_index, distance = edges[current_edge_index]
+        current_edge_index += 1
+        x = find_parent(parent, island1_index)
+        y = find_parent(parent, island2_index)
 
         if x != y:
-            e += 1
-            mst.append([u, v, w])
+            edges_added += 1
+            mst.append([island1_index, island2_index, distance])
             union(parent, rank, x, y)
 
     return mst
